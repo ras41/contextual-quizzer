@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import TextArea from "./components/TextArea";
 import QuizArea from "./components/QuizArea";
-import { STOP_WORDS } from "./utils/stopwords";
+// import { STOP_WORDS } from './utils/stopwords'; // OLD: We don't need this anymore!
 import "./App.css";
 
 function App() {
@@ -9,61 +9,51 @@ function App() {
   const [quizText, setQuizText] = useState("");
   const [answers, setAnswers] = useState([]);
   const [userInputs, setUserInputs] = useState({});
-  const [score, setScore] = useState(null); // null means "not graded yet"
+  const [score, setScore] = useState(null);
 
-  const handleGenerateQuiz = () => {
-    // 1. Sanitize text
-    const sanitizedText = rawText.toLowerCase().replace(/[^a-z\s]/g, "");
+  // --- NEW STATE ---
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null); // To show API errors
 
-    // 2. Filter out stop words
-    const allWords = sanitizedText.split(/\s+/);
-    const importantWords = allWords.filter((word) => {
-      // Only count words with 3+ letters that are NOT stop words
-      return word.length > 2 && !STOP_WORDS.has(word);
-    });
-
-    // 3. Pick words to blank out
-    const uniqueImportantWords = [...new Set(importantWords)];
-    const wordCount = Math.max(
-      5,
-      Math.min(Math.floor(uniqueImportantWords.length / 5), 10)
-    );
-    const wordsToBlank = uniqueImportantWords
-      .sort(() => 0.5 - Math.random())
-      .slice(0, wordCount);
-
-    // 4. --- THE CRITICAL BUG FIX ---
-    // If we have no words, stop right here.
-    if (wordsToBlank.length === 0 || wordsToBlank.join("|") === "") {
-      setQuizText("This text is too short or has no keywords to quiz!");
-      setAnswers([]);
-      setUserInputs({});
-      setScore(null);
-      return; // Stop the function
-    }
-    // -------------------------------
-
-    // 5. Build the "smart" regex
-    // e.g., \b(mitochondria|cell|energy)(?![a-zA-Z])
-    const regex = new RegExp(
-      `\\b(${wordsToBlank.join("|")})(?![a-zA-Z])`,
-      "gi"
-    );
-
-    const finalAnswers = [];
-    const generatedQuizText = rawText.replace(regex, (match) => {
-      finalAnswers.push(match); // Add the answer *in order*
-      return "[_____]";
-    });
-
-    // 6. Set the state
-    setQuizText(generatedQuizText);
-    setAnswers(finalAnswers);
+  // --- THIS IS THE "BRAIN TRANSPLANT" ---
+  const handleGenerateQuiz = async () => {
+    setIsLoading(true); // Show loading spinner
+    setError(null); // Clear old errors
+    setQuizText(""); // Clear old quiz
+    setAnswers([]);
     setUserInputs({});
     setScore(null);
-  };
 
-  // This function is called by QuizArea every time a blank is typed in
+    try {
+      // 1. Call our *own* server (the "lockbox")
+      const response = await fetch("http://localhost:3001/generate-quiz", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ textToQuiz: rawText }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Something went wrong with the AI server.");
+      }
+
+      // 2. Get the JSON response from *our* server
+      const data = await response.json();
+      // data is { quizText: "...", answers: [...] }
+
+      // 3. Set the state with the AI-generated data
+      setQuizText(data.quizText);
+      setAnswers(data.answers);
+    } catch (err) {
+      console.error(err);
+      setError(err.message); // Show the error to the user
+    } finally {
+      setIsLoading(false); // Hide loading spinner
+    }
+  };
+  // --- END OF NEW FUNCTION ---
+
   const handleAnswerChange = (index, value) => {
     setUserInputs((prevInputs) => ({
       ...prevInputs,
@@ -71,11 +61,9 @@ function App() {
     }));
   };
 
-  // This function is called when the user clicks "Check Answers"
   const handleCheckAnswers = () => {
     let correctCount = 0;
     answers.forEach((correctAnswer, index) => {
-      // Use .trim() to remove whitespace!
       const userAnswer = (userInputs[index] || "").trim();
       if (userAnswer.toLowerCase() === correctAnswer.toLowerCase()) {
         correctCount++;
@@ -84,11 +72,10 @@ function App() {
     setScore(correctCount);
   };
 
-  // --- This is the part that renders the page ---
   return (
     <div className="app-container">
       <header>
-        <h1>Contextual Quizzer 🧠</h1>
+        <h1>Contextual Quizzer 🧠✨</h1> {/* Added a sparkle! */}
         <p>Turn any text into an interactive quiz instantly.</p>
       </header>
 
@@ -96,10 +83,21 @@ function App() {
         <TextArea onTextChange={setRawText} />
 
         <div className="button-container">
-          <button className="generate-button" onClick={handleGenerateQuiz}>
-            Generate Quiz!
+          <button
+            className="generate-button"
+            onClick={handleGenerateQuiz}
+            disabled={isLoading} // NEW: Disable button while loading
+          >
+            {/* NEW: Show different text when loading */}
+            {isLoading ? "🧠 AI is thinking..." : "Generate Quiz!"}
           </button>
         </div>
+
+        {/* NEW: Show loading message or error message */}
+        {isLoading && (
+          <div className="loading-message">Generating your quiz...</div>
+        )}
+        {error && <div className="error-message">{error}</div>}
 
         <QuizArea
           quizText={quizText}

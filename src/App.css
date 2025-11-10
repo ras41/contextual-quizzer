@@ -49,3 +49,30 @@
   color: #333;
   margin-top: 1rem;
 }
+
+/* --- Add this to the BOTTOM of App.css --- */
+
+/* Make the button look "disabled" */
+.generate-button:disabled {
+  background-color: #999;
+  cursor: not-allowed;
+}
+
+.loading-message,
+.error-message {
+  text-align: center;
+  font-size: 1.1rem;
+  padding: 1rem;
+  border-radius: 4px;
+}
+
+.loading-message {
+  color: #555;
+  background-color: #f0f0f0;
+}
+
+.error-message {
+  color: #d8000c; /* Red */
+  background-color: #ffd2d2;
+  font-weight: bold;
+}
