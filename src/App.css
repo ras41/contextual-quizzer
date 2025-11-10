@@ -1,78 +1,475 @@
-/* --- Add this to the BOTTOM of App.css --- */
+/* /* src/App.css */
+@import url("https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Kalam:wght@400;700&display=swap");
+
+/* Base styles from index.css are fine */
+body {
+  font-family: "Kalam", cursive, sans-serif; /* Hand-drawn font */
+  background-color: #121212;
+  color: #e0e0e0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Align to top for better scrolling */
+  min-height: 100vh;
+  padding: 1rem;
+}
+
+.app-container {
+  max-width: 800px;
+  width: 100%; /* Ensure it takes full width on small screens */
+  margin: 1rem auto; /* Adjusted margin */
+  background: #1e1e1e;
+  border: 2px solid #333; /* Stronger border */
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); /* Stronger shadow */
+  overflow: hidden;
+  position: relative; /* For absolute positioning of elements */
+  padding-bottom: 2rem; /* Space for footer */
+}
+
+/* --- Checkerboard Background --- */
+.app-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("./assets/checkerboard-subtle.svg");
+  background-repeat: repeat;
+  opacity: 0.1; /* Very subtle */
+  z-index: 0;
+}
+
+header,
+main,
+footer {
+  position: relative; /* Ensure content is above checkerboard */
+  z-index: 1;
+}
+
+/* --- Header --- */
+header {
+  padding: 1.5rem 2.5rem 1rem; /* Adjust padding */
+  text-align: center;
+  background: linear-gradient(110deg, #333 0%, #222 100%);
+  border-bottom: 2px solid #444;
+  position: relative;
+}
+
+.header-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.logo-area .logo-text {
+  font-family: "Permanent Marker", cursive; /* Your logo font */
+  font-size: 1.5rem;
+  color: #aaff00; /* Neon green from your design */
+  text-shadow: 2px 2px #7b1fa2; /* Neon purple shadow */
+}
+
+.how-to-use {
+  font-size: 0.9rem;
+  color: #bbb;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+header h1 {
+  font-family: "Permanent Marker", cursive; /* Your main title font */
+  margin: 0 0 0.5rem 0;
+  font-size: 2.5rem;
+  color: #aaff00; /* Neon green */
+  text-shadow: 3px 3px #7b1fa2; /* Neon purple shadow */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  line-height: 1; /* Tighter line height for title */
+}
+
+header p {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #aaa;
+  font-family: "Kalam", cursive;
+}
+
+/* --- Main Content Area --- */
+main {
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* --- Text Area with Pencil --- */
+.textarea-wrapper {
+  position: relative;
+  border: 3px dashed #7b1fa2; /* Dashed border for the container */
+  border-radius: 8px;
+  padding: 1rem;
+  background-color: #2b2b2b;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.textarea-wrapper::before {
+  /* Left pencil */
+  content: "";
+  position: absolute;
+  left: -20px; /* Adjust position */
+  top: 50%;
+  transform: translateY(-50%) rotate(90deg);
+  width: 60px;
+  height: 60px;
+  background-image: url("./assets/pencil.svg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  z-index: 2;
+  filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.5));
+}
+
+.textarea-wrapper::after {
+  /* Right pencil */
+  content: "";
+  position: absolute;
+  right: -20px; /* Adjust position */
+  top: 50%;
+  transform: translateY(-50%) rotate(-90deg); /* Rotate for right side */
+  width: 60px;
+  height: 60px;
+  background-image: url("./assets/pencil.svg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  z-index: 2;
+  filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.5));
+}
+
+.textarea-container h3 {
+  font-family: "Kalam", cursive;
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+  color: #eee;
+}
+
+.textarea-input {
+  width: 100%;
+  min-height: 150px;
+  padding: 0.75rem;
+  border: 1px solid #444;
+  border-radius: 6px;
+  background-color: #2b2b2b;
+  color: #e0e0e0;
+  font-family: inherit;
+  font-size: 1rem;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  resize: vertical; /* Allow resizing */
+}
+
+.textarea-input:focus {
+  outline: none;
+  border-color: #aaff00; /* Neon green focus */
+  box-shadow: 0 0 0 3px rgba(170, 255, 0, 0.3);
+}
+
+/* --- Generate Button --- */
+.generate-quiz-btn-wrapper {
+  text-align: center;
+  position: relative;
+  /* Add subtle lines like in your sketch above the button */
+}
+
+.generate-quiz-btn-wrapper::before {
+  content: "";
+  position: absolute;
+  top: -10px; /* Adjust as needed */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 2px;
+  background: repeating-linear-gradient(
+    -45deg,
+    #7b1fa2,
+    #7b1fa2 5px,
+    transparent 5px,
+    transparent 10px
+  );
+}
+
+.generate-button {
+  background: #f9a826;
+  color: #1e1e1e; /* Darker text for contrast */
+  font-family: "Permanent Marker", cursive; /* Hand-drawn font */
+  font-size: 1.2rem;
+  font-weight: bold;
+  border: 2px solid #7b1fa2; /* Neon purple border */
+  padding: 0.8rem 2rem; /* More padding */
+  border-radius: 8px; /* Slightly more rounded */
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 4px 15px rgba(249, 168, 38, 0.4); /* Glow effect */
+}
+
+.generate-button:hover:not(:disabled) {
+  transform: translateY(-3px) scale(1.02); /* More pronounced hover */
+  box-shadow: 0 8px 25px rgba(249, 168, 38, 0.6),
+    0 0 30px rgba(249, 168, 38, 0.8); /* Stronger glow */
+}
+
+.generate-button:disabled {
+  background-color: #555;
+  color: #999;
+  border-color: #444;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* --- Quiz Area --- */
+.quiz-area-header {
+  position: relative;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.quiz-area-header h3 {
+  font-family: "Permanent Marker", cursive;
+  margin-top: 0;
+  margin-bottom: 0;
+  font-size: 1.5rem;
+  color: #aaff00; /* Neon green */
+  text-shadow: 1px 1px #7b1fa2;
+}
+
+.quiz-area-header .star-decoration {
+  position: absolute;
+  font-size: 1.5rem;
+  color: gold; /* Yellow stars */
+  top: -10px;
+  transform: rotate(15deg);
+}
+.quiz-area-header .star-decoration.right {
+  right: 0;
+  transform: rotate(-15deg);
+}
+
+.quiz-output {
+  min-height: 150px; /* Taller quiz area */
+  background: #252525;
+  border: 3px dashed #7b1fa2; /* Dashed border */
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.quiz-output .placeholder {
+  color: #888;
+  font-style: italic;
+  font-size: 1.1rem;
+  font-family: "Kalam", cursive;
+}
 
 .interactive-quiz {
-  line-height: 2.5; /* Gives space for the input boxes */
-  font-size: 1.1rem;
+  line-height: 2.8;
+  font-size: 1.15rem;
+  font-family: "Kalam", cursive;
 }
 
 .quiz-input {
-  border: 2px solid #aaa;
+  background: #333;
+  border: 2px solid #555;
+  color: #eee;
   border-radius: 4px;
-  padding: 4px 6px;
+  padding: 6px 8px;
   font-size: 1rem;
   font-family: inherit;
   width: 150px;
-  margin: 0 5px;
-  transition: border-color 0.3s;
+  margin: 0 6px;
+  transition: all 0.2s;
+  vertical-align: middle; /* Align with text */
 }
 
 .quiz-input:focus {
   outline: none;
-  border-color: #4a90e2; /* Blue border on focus */
+  border-color: #aaff00;
+  box-shadow: 0 0 0 3px rgba(170, 255, 0, 0.3);
 }
 
-.check-answers-container {
+/* Score Feedback Area */
+.score-feedback-area {
   text-align: center;
-  margin-top: 1.5rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid #eee;
+  margin-top: 2.5rem;
+  padding-top: 2rem;
+  border-top: 2px solid #333; /* Stronger separator */
+  position: relative;
 }
 
-.check-button {
-  background-color: #f5a623; /* An orange "check" button */
-  color: white;
-  font-size: 1rem;
+.score-display {
+  font-family: "Permanent Marker", cursive;
+  font-size: 2rem;
+  color: #aaff00;
+  text-shadow: 2px 2px #7b1fa2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.cloud-emoji {
+  font-size: 2.5rem;
+  line-height: 1; /* prevent extra space */
+  position: absolute;
+  left: 20%;
+  top: 0;
+  filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.5));
+  transform: rotate(-10deg);
+}
+.trophy-emoji {
+  font-size: 2rem;
+  line-height: 1;
+  position: absolute;
+  right: 20%;
+  top: 10px;
+  filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.5));
+  transform: rotate(10deg);
+}
+
+.good-score-message,
+.not-good-score-message {
+  font-family: "Kalam", cursive;
+  font-size: 1.3rem;
+  margin-bottom: 1.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  display: inline-block; /* To make background fit text */
+}
+
+.good-score-message {
+  color: #1e1e1e;
+  background-color: #50c878; /* Green */
+}
+
+.not-good-score-message {
+  color: #f8baba;
+  background-color: #5a2828; /* Red */
+}
+
+.play-again-button {
+  background-color: #7b1fa2; /* Neon purple */
+  color: #aaff00; /* Neon green text */
+  font-family: "Permanent Marker", cursive;
+  font-size: 1.1rem;
   font-weight: bold;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 4px;
+  border: 2px solid #aaff00; /* Neon green border */
+  padding: 0.9rem 2.2rem;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s;
+  box-shadow: 0 4px 15px rgba(123, 31, 162, 0.4);
 }
 
-.check-button:hover {
-  background-color: #d88e0f;
+.play-again-button:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(123, 31, 162, 0.6),
+    0 0 30px rgba(123, 31, 162, 0.8);
 }
 
-.score {
-  font-size: 1.25rem;
-  color: #333;
-  margin-top: 1rem;
-}
-
-/* --- Add this to the BOTTOM of App.css --- */
-
-/* Make the button look "disabled" */
-.generate-button:disabled {
-  background-color: #999;
-  cursor: not-allowed;
-}
-
+/* --- Loading / Error States --- */
 .loading-message,
 .error-message {
   text-align: center;
+  font-family: "Kalam", cursive;
   font-size: 1.1rem;
-  padding: 1rem;
-  border-radius: 4px;
+  padding: 1.25rem;
+  border-radius: 6px;
+  margin-top: -1rem;
 }
 
 .loading-message {
-  color: #555;
-  background-color: #f0f0f0;
+  color: #ccc;
+  background-color: #2a2a2a;
 }
 
 .error-message {
-  color: #d8000c; /* Red */
-  background-color: #ffd2d2;
-  font-weight: bold;
+  color: #f8baba;
+  background-color: #5a2828;
+  border: 1px solid #e53e3e;
+  font-weight: 500;
+}
+
+/* --- Footer --- */
+footer {
+  text-align: center;
+  padding: 1.5rem;
+  border-top: 2px solid #333;
+  background: linear-gradient(110deg, #222 0%, #333 100%);
+  font-family: "Kalam", cursive;
+  font-size: 0.9rem;
+  color: #aaa;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.footer-quizzer {
+  font-family: "Permanent Marker", cursive;
+  font-size: 1rem;
+  color: #aaff00;
+  text-shadow: 1px 1px #7b1fa2;
+  margin-left: 0.5rem;
+}
+
+.footer-stars {
+  position: absolute;
+  left: 20px;
+  font-size: 1.2rem;
+  color: gold;
+}
+
+/* --- Responsive Styles --- */
+@media (max-width: 768px) {
+  body {
+    padding: 0;
+  }
+
+  .app-container {
+    margin: 0;
+    border-radius: 0;
+    border: none;
+    min-height: 100vh;
+  }
+
+  main {
+    padding: 1.5rem;
+  }
+
+  header {
+    padding: 1rem; /* Tighter header on mobile */
+  }
+
+  header h1 {
+    font-size: 2rem;
+  }
+
+  .textarea-wrapper::before,
+  .textarea-wrapper::after {
+    display: none; /* Hide pencils on small screens */
+  }
+
+  .score-feedback-area .cloud-emoji,
+  .score-feedback-area .trophy-emoji {
+    position: static; /* Let emojis flow naturally */
+    transform: none;
+    font-size: 1.5rem;
+  }
+
+  .score-display {
+    flex-wrap: wrap; /* Allow wrapping */
+  }
 }
