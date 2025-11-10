@@ -1,0 +1,51 @@
+/* --- Add this to the BOTTOM of App.css --- */
+
+.interactive-quiz {
+  line-height: 2.5; /* Gives space for the input boxes */
+  font-size: 1.1rem;
+}
+
+.quiz-input {
+  border: 2px solid #aaa;
+  border-radius: 4px;
+  padding: 4px 6px;
+  font-size: 1rem;
+  font-family: inherit;
+  width: 150px;
+  margin: 0 5px;
+  transition: border-color 0.3s;
+}
+
+.quiz-input:focus {
+  outline: none;
+  border-color: #4a90e2; /* Blue border on focus */
+}
+
+.check-answers-container {
+  text-align: center;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #eee;
+}
+
+.check-button {
+  background-color: #f5a623; /* An orange "check" button */
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.check-button:hover {
+  background-color: #d88e0f;
+}
+
+.score {
+  font-size: 1.25rem;
+  color: #333;
+  margin-top: 1rem;
+}
