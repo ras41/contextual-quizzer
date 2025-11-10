@@ -1,0 +1,146 @@
+/* src/components/HowToModal.css */
+
+.modal-backdrop {
+  position: fixed; /* Stays in place even when scrolling */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.75); /* Darker backdrop */
+  backdrop-filter: blur(5px); /* Nice blur effect */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* On top of everything */
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modal-content {
+  background: #1e1e1e;
+  padding: 1.5rem 2rem;
+  border-radius: 12px;
+  border: 3px dashed #aaff00; /* Neon green border */
+  box-shadow: 0 10px 40px rgba(170, 255, 0, 0.2); /* Neon glow */
+  width: 90%;
+  max-width: 600px;
+  z-index: 1001;
+  animation: slideIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #333;
+  padding-bottom: 1rem;
+}
+
+.modal-header h2 {
+  font-family: "Permanent Marker", cursive;
+  font-size: 2rem;
+  color: #aaff00;
+  text-shadow: 2px 2px #7b1fa2;
+  margin: 0;
+}
+
+.modal-close-x {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #aaa;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.modal-close-x:hover {
+  color: #fff;
+  transform: scale(1.1);
+}
+
+.modal-body {
+  padding: 1.5rem 0;
+}
+
+.modal-body ol {
+  font-family: "Kalam", cursive;
+  font-size: 1.15rem;
+  line-height: 2;
+  padding-left: 2rem;
+  margin: 0;
+}
+
+.modal-body li {
+  margin-bottom: 1rem;
+}
+
+.modal-body li::marker {
+  color: #aaff00; /* Neon green bullet points */
+  font-weight: bold;
+}
+
+.modal-footer {
+  text-align: center;
+  padding-top: 1rem;
+  border-top: 2px solid #333;
+}
+
+.modal-close-btn {
+  /* Steal the style from our 'Play Again' button */
+  background-color: #7b1fa2;
+  color: #aaff00;
+  font-family: "Permanent Marker", cursive;
+  font-size: 1.1rem;
+  font-weight: bold;
+  border: 2px solid #aaff00;
+  padding: 0.9rem 2.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 15px rgba(123, 31, 162, 0.4);
+}
+
+.modal-close-btn:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(123, 31, 162, 0.6),
+    0 0 30px rgba(123, 31, 162, 0.8);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translate(-50%, -70%);
+    opacity: 0;
+  }
+  to {
+    transform: translate(
+      0,
+      0
+    ); /* This needs to be 0,0 since we're in a flex container */
+    opacity: 1;
+  }
+}
+
+/* Fix for modal content in flex container */
+.modal-content {
+  transform: scale(0.95);
+  animation: slideIn-flex 0.3s ease-out forwards;
+}
+@keyframes slideIn-flex {
+  from {
+    transform: scale(0.9) translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}

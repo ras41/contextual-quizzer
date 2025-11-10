@@ -69,7 +69,7 @@ function QuizArea({
         {/* Only show the "Check" button if there's a quiz */}
         {answers.length > 0 && (
           <div className="check-answers-container">
-            <button className="check-button" onClick={onCheckAnswers}>
+            <button className="generate-button" onClick={onCheckAnswers}>
               Check My Answers!
             </button>
 

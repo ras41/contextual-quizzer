@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import TextArea from "./components/TextArea";
 import QuizArea from "./components/QuizArea";
+import HowToModal from "./components/HowToModal";
 import "./App.css";
 
 // STEP 1: Re-import our offline stopwords
@@ -14,6 +15,7 @@ function App() {
   const [score, setScore] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [showHowTo, setShowHowTo] = useState(false);
 
   // STEP 2: Create a "pure" helper function for our offline algorithm
   // This function just takes text and returns a quiz object. It doesn't set state.
@@ -159,24 +161,41 @@ function App() {
       <header>
         <div className="header-top-bar">
           <div className="logo-area">
-            <span className="logo-text">LOGO</span>
+            {/* <span className="logo-text">LOGO</span> */}
+            {/* <img
+              src={"src/assets/logo.gif"}
+              height={80}
+              width={80}
+              alt="Contextual Quizzer Logo"
+              className="logo-image"
+            /> */}
           </div>
-          <div className="how-to-use">
+          <div className="how-to-use" onClick={() => setShowHowTo(true)}>
             How to use{" "}
             <span role="img" aria-label="question mark">
               ❓
             </span>
-          </div>
+          </div>{" "}
         </div>
 
         <h1>
-          Contextual Quizzer{" "}
-          <span role="img" aria-label="brain emoji">
+          <div className="logo-area">
+            {/* <span className="logo-text">LOGO</span> */}
+            <img
+              src={"src/assets/logobanner.png"}
+              height={120}
+              width={300}
+              alt="Contextual Quizzer Logo"
+              className="logo-image"
+            />
+          </div>
+          {/* Contextual Quizzer{" "} */}
+          {/* <span role="img" aria-label="brain emoji">
             🧠
           </span>
           <span role="img" aria-label="swirl emoji">
             🌀
-          </span>
+          </span> */}
         </h1>
         <p>Turn any text into an interactive Quiz instantly.</p>
       </header>
@@ -247,6 +266,7 @@ function App() {
         </p>
         <span className="footer-stars">✨⭐✨</span>
       </footer>
+      {showHowTo && <HowToModal onClose={() => setShowHowTo(false)} />}
     </div>
   );
 }
