@@ -1,91 +1,69 @@
 import React, { useState } from "react";
 import TextArea from "./components/TextArea";
-import QuizArea from "./components/QuizArea"; // This component will be updated next
+import QuizArea from "./components/QuizArea";
 import { STOP_WORDS } from "./utils/stopwords";
 import "./App.css";
 
 function App() {
   const [rawText, setRawText] = useState("");
   const [quizText, setQuizText] = useState("");
-
-  // --- NEW STATE ---
-  // We need to store the *list* of correct answers
   const [answers, setAnswers] = useState([]);
-  // We need to store what the user types in each blank
   const [userInputs, setUserInputs] = useState({});
-  // We need to store the final score
   const [score, setScore] = useState(null); // null means "not graded yet"
-  // -------------------
 
   const handleGenerateQuiz = () => {
+    // 1. Sanitize text
     const sanitizedText = rawText.toLowerCase().replace(/[^a-z\s]/g, "");
 
+    // 2. Filter out stop words
     const allWords = sanitizedText.split(/\s+/);
     const importantWords = allWords.filter((word) => {
-      return word.length > 1 && !STOP_WORDS.has(word);
+      // Only count words with 3+ letters that are NOT stop words
+      return word.length > 2 && !STOP_WORDS.has(word);
     });
 
+    // 3. Pick words to blank out
     const uniqueImportantWords = [...new Set(importantWords)];
-
-    // Let's aim for 5-10 words
     const wordCount = Math.max(
       5,
       Math.min(Math.floor(uniqueImportantWords.length / 5), 10)
     );
-
     const wordsToBlank = uniqueImportantWords
       .sort(() => 0.5 - Math.random())
       .slice(0, wordCount);
 
-    // ... (code above this is fine)
-
-    if (wordsToBlank.length === 0 && rawText.length > 0) {
-      setQuizText("This text was too short or had no common words to quiz!");
+    // 4. --- THE CRITICAL BUG FIX ---
+    // If we have no words, stop right here.
+    if (wordsToBlank.length === 0 || wordsToBlank.join("|") === "") {
+      setQuizText("This text is too short or has no keywords to quiz!");
       setAnswers([]);
-      return;
+      setUserInputs({});
+      setScore(null);
+      return; // Stop the function
     }
+    // -------------------------------
 
-    // --- THIS IS THE NEW, FIXED LOGIC ---
-
-    // 1. Create a regex that will find *any* of our chosen words
-    //    e.g., /\\b(mitochondria|cell|energy)\\b/gi
-    //    'g' = global (find all), 'i' = case-insensitive
-    // This new regex means "Find one of the words,
-    // as long as it's NOT immediately followed by another letter."
-    // This will correctly match "energy" in "energy." or "energy,"
+    // 5. Build the "smart" regex
+    // e.g., \b(mitochondria|cell|energy)(?![a-zA-Z])
     const regex = new RegExp(
       `\\b(${wordsToBlank.join("|")})(?![a-zA-Z])`,
       "gi"
     );
-    // 2. We create our new *correct* answers list
+
     const finalAnswers = [];
-
-    // 3. We use the .replace() function's "callback" method.
-    //    This function will be called for *every* word it matches.
     const generatedQuizText = rawText.replace(regex, (match) => {
-      // 'match' will be the *actual* word found (e.g., "Mitochondria")
-      // We push it onto our answers list *in the order it was found*
-      finalAnswers.push(match);
-
-      // And we return the blank
+      finalAnswers.push(match); // Add the answer *in order*
       return "[_____]";
     });
 
-    // 4. NOW the lists are in sync!
+    // 6. Set the state
     setQuizText(generatedQuizText);
-    setAnswers(finalAnswers); // Set the correctly-ordered answers
+    setAnswers(finalAnswers);
     setUserInputs({});
     setScore(null);
-
-    // ... (rest of function)
-
-    setQuizText(generatedQuizText);
-    setAnswers(wordsToBlank); // NEW: Save the correct answers!
-    setUserInputs({}); // NEW: Clear any old inputs
-    setScore(null); // NEW: Clear the old score
   };
 
-  // NEW: This function is called by QuizArea every time a blank is typed in
+  // This function is called by QuizArea every time a blank is typed in
   const handleAnswerChange = (index, value) => {
     setUserInputs((prevInputs) => ({
       ...prevInputs,
@@ -93,12 +71,12 @@ function App() {
     }));
   };
 
-  // NEW: This function is called when the user clicks "Check Answers"
+  // This function is called when the user clicks "Check Answers"
   const handleCheckAnswers = () => {
     let correctCount = 0;
     answers.forEach((correctAnswer, index) => {
-      const userAnswer = (userInputs[index] || "").trim(); // <-- Added .trim()
-      //       // Compare answers (lowercase)
+      // Use .trim() to remove whitespace!
+      const userAnswer = (userInputs[index] || "").trim();
       if (userAnswer.toLowerCase() === correctAnswer.toLowerCase()) {
         correctCount++;
       }
@@ -106,6 +84,7 @@ function App() {
     setScore(correctCount);
   };
 
+  // --- This is the part that renders the page ---
   return (
     <div className="app-container">
       <header>
@@ -122,9 +101,6 @@ function App() {
           </button>
         </div>
 
-        {/* NEW: We are passing *many* more props down to QuizArea
-          so it can be interactive.
-        */}
         <QuizArea
           quizText={quizText}
           answers={answers}
